@@ -163,22 +163,20 @@ export default function App() {
         <div className="flex items-end gap-2 mb-6">
           <button
             onClick={() => handleTabSwitch("photo")}
-            className={`px-4 py-2 rounded-t-2xl ${
-              activeTab === "photo"
-                ? "bg-white text-gray-900 border-b-2 border-indigo-500 shadow"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
+            className={`px-4 py-2 rounded-t-2xl ${activeTab === "photo"
+              ? "bg-white text-gray-900 border-b-2 border-indigo-500 shadow"
+              : "text-gray-600 hover:text-gray-900"
+              }`}
           >
             Photo to Art
           </button>
 
           <button
             onClick={() => handleTabSwitch("text")}
-            className={`px-4 py-2 rounded-t-2xl ${
-              activeTab === "text"
-                ? "bg-white text-gray-900 border-b-2 border-indigo-500 shadow"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
+            className={`px-4 py-2 rounded-t-2xl ${activeTab === "text"
+              ? "bg-white text-gray-900 border-b-2 border-indigo-500 shadow"
+              : "text-gray-600 hover:text-gray-900"
+              }`}
           >
             Text to Art
           </button>
@@ -202,14 +200,35 @@ export default function App() {
                   <img
                     src={URL.createObjectURL(uploadedImage)}
                     alt="Uploaded Preview"
-                    className="rounded-xl object-cover h-48 w-full shadow-md"
+                    className="rounded-xl object-contain max-h-60 w-full shadow-md"
                   />
                 ) : (
                   <p className="text-gray-500 font-medium">📸 Drag & drop image here or browse</p>
                 )}
               </label>
 
-              <FileInput id="photo-upload" onChange={(e) => setUploadedImage(e.target.files?.[0])} className="hidden" />
+              <FileInput
+                id="photo-upload"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (!file.type.startsWith("image/")) {
+                      Swal.fire({
+                        icon: "error",
+                        title: "Invalid File",
+                        text: "Please upload a valid image file.",
+                        confirmButtonColor: "#6366f1",
+                      });
+                      e.target.value = ""; // reset input
+                      setUploadedImage(null);
+                      return;
+                    }
+                    setUploadedImage(file);
+                  }
+                }}
+              />
 
               <Textarea
                 placeholder="Add an additional prompt..."
@@ -239,7 +258,7 @@ export default function App() {
             <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
               <div className="w-full h-80 flex items-center justify-center">
                 {loading ? (
-                  <Spinner size="xl" color="purple" />
+                  <Spinner size="xxl" color="purple" />
                 ) : generatedImagePhoto ? (
                   <img src={generatedImagePhoto} alt="Generated Art" className="rounded-xl object-cover h-full shadow-md" />
                 ) : (
@@ -312,7 +331,7 @@ export default function App() {
                     <Spinner size="sm" /> Generating...
                   </div>
                 ) : (
-                  "🎨 Generate Art"
+                  "🎨 Generate"
                 )}
               </Button>
             </Card>
