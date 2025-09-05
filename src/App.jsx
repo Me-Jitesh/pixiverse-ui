@@ -46,9 +46,12 @@ export default function App() {
       formData.append("prompt", textPrompt);
 
       const response = await axios.post(
-        "http://localhost:8080/api/v1/pixiverse/generate",
+        "https://pixiverse.koyeb.app/api/v1/pixiverse/generate",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" }, responseType: "arraybuffer" }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          responseType: "arraybuffer",
+        }
       );
 
       setGeneratedImage(convertToBase64(response.data));
@@ -68,9 +71,12 @@ export default function App() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/pixiverse/generate/text",
+        "https://pixiverse.koyeb.app/api/v1/pixiverse/generate/text",
         { prompt: textPrompt, style: selectedStyle },
-        { headers: { "Content-Type": "application/json" }, responseType: "arraybuffer" }
+        {
+          headers: { "Content-Type": "application/json" },
+          responseType: "arraybuffer",
+        }
       );
 
       setGeneratedImage(convertToBase64(response.data));
@@ -82,52 +88,68 @@ export default function App() {
     }
   };
 
+  // Download generated image
+  const handleDownload = () => {
+    if (!generatedImage) return;
+    const link = document.createElement("a");
+    link.href = generatedImage;
+    link.download = "ghibli-art.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-gray-100 p-6">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-gray-50 p-6">
       <div className="w-full max-w-6xl">
         <Tabs aria-label="Ghibli Art Generator" variant="underline">
           {/* Photo to Art */}
           <Tabs.Item active title="Photo to Art">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Input Card */}
-              <Card className="rounded-2xl shadow-soft">
+              <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/90 backdrop-blur-sm">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
                   Upload Photo to Transform
                 </h3>
 
-                <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-gray-100 transition cursor-pointer">
+                <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer">
                   {uploadedImage ? (
                     <img
                       src={URL.createObjectURL(uploadedImage)}
                       alt="Uploaded Preview"
-                      className="rounded-xl object-cover h-48 w-full"
+                      className="rounded-xl object-cover h-48 w-full shadow-md"
                     />
                   ) : (
-                    <p className="text-gray-500">Drag & drop image here or browse</p>
+                    <p className="text-gray-500 font-medium">
+                      📸 Drag & drop image here or browse
+                    </p>
                   )}
                   <FileInput onChange={handleFileChange} className="hidden" />
                 </label>
 
                 <Textarea
                   placeholder="Add an additional prompt..."
-                  className="mt-4 p-3 border border-gray-300 rounded-xl shadow-soft focus:border-purple-500 focus:ring focus:ring-purple-200 transition-all duration-300"
+                  className="mt-4 p-3 border border-gray-300 rounded-xl shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
                   rows={3}
                   value={textPrompt}
                   onChange={(e) => setTextPrompt(e.target.value)}
                 />
 
                 <Button
-                  className="mt-4 text-white font-semibold py-2 px-6 rounded-xl shadow-soft hover:scale-105 transform transition-all duration-300"
-                  style={{ background: 'linear-gradient(to right, #3b82f6, #8b5cf6)' }}
+                  className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-purple-400/40 hover:scale-105 transform transition-all duration-300"
+                  style={{
+                    background:
+                      "linear-gradient(to right, #6366f1, #a855f7, #ec4899)",
+                  }}
                   onClick={handleGeneratePhoto}
                   disabled={loading}
                 >
-                  {loading ? "Transforming..." : "Transform to Ghibli Art"}
+                  {loading ? "Transforming..." : "✨ Transform to Ghibli Art"}
                 </Button>
               </Card>
 
               {/* Output Preview */}
-              <Card className="rounded-2xl shadow-soft flex items-center justify-center bg-gray-100 p-4">
+              <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
                 <div className="w-full h-80 flex items-center justify-center">
                   {loading ? (
                     <Spinner size="xl" color="purple" />
@@ -135,12 +157,26 @@ export default function App() {
                     <img
                       src={generatedImage}
                       alt="Generated Art"
-                      className="rounded-xl object-cover h-full"
+                      className="rounded-xl object-cover h-full shadow-md"
                     />
                   ) : (
-                    <span className="text-gray-400">Generated art will appear here</span>
+                    <span className="text-gray-400 font-medium">
+                      Generated art will appear here
+                    </span>
                   )}
                 </div>
+                {generatedImage && (
+                  <Button
+                    onClick={handleDownload}
+                    className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-cyan-400/40 hover:scale-105 transform transition-all duration-300"
+                    style={{
+                      background:
+                        "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)",
+                    }}
+                  >
+                    ⬇️ Download Art
+                  </Button>
+                )}
               </Card>
             </div>
           </Tabs.Item>
@@ -149,17 +185,19 @@ export default function App() {
           <Tabs.Item title="Text to Art">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Input Card */}
-              <Card className="rounded-2xl shadow-soft">
+              <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/90 backdrop-blur-sm">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
                   Text to Ghibli Art
                 </h3>
 
-                <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-gray-100 transition cursor-pointer mb-4">
-                  <p className="text-gray-500">Generate Ghibli art from your text description</p>
+                <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer mb-4">
+                  <p className="text-gray-500 font-medium">
+                    📝 Generate Ghibli art from your text description
+                  </p>
                 </div>
 
                 <Select
-                  className="mb-4"
+                  className="mb-4 rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
                   value={selectedStyle}
                   onChange={(e) => setSelectedStyle(e.target.value)}
                 >
@@ -184,24 +222,27 @@ export default function App() {
 
                 <Textarea
                   placeholder="Your description..."
-                  className="mt-4 p-3 border border-gray-300 rounded-xl shadow-soft focus:border-purple-500 focus:ring focus:ring-purple-200 transition-all duration-300"
+                  className="mt-4 p-3 border border-gray-300 rounded-xl shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
                   rows={3}
                   value={textPrompt}
                   onChange={(e) => setTextPrompt(e.target.value)}
                 />
 
                 <Button
-                  className="mt-4 text-white font-semibold py-2 px-6 rounded-xl shadow-soft hover:scale-105 transform transition-all duration-300"
-                  style={{ background: 'linear-gradient(to right, #3b82f6, #8b5cf6)' }}
+                  className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-purple-400/40 hover:scale-105 transform transition-all duration-300"
+                  style={{
+                    background:
+                      "linear-gradient(to right, #6366f1, #a855f7, #ec4899)",
+                  }}
                   onClick={handleGenerateText}
                   disabled={loading}
                 >
-                  {loading ? "Generating..." : "Generate Art"}
+                  {loading ? "Generating..." : "🎨 Generate Art"}
                 </Button>
               </Card>
 
               {/* Output Preview */}
-              <Card className="rounded-2xl shadow-soft flex items-center justify-center bg-gray-100 p-4">
+              <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
                 <div className="w-full h-80 flex items-center justify-center text-center">
                   {loading ? (
                     <Spinner size="xl" color="purple" />
@@ -209,14 +250,30 @@ export default function App() {
                     <img
                       src={generatedImage}
                       alt="Generated Art"
-                      className="rounded-xl object-cover h-full"
+                      className="rounded-xl object-cover h-full shadow-md"
                     />
                   ) : textPrompt ? (
-                    <p className="text-lg text-gray-600 italic">✨ Preview: "{textPrompt}"</p>
+                    <p className="text-lg text-gray-600 italic">
+                      ✨ Preview: "{textPrompt}"
+                    </p>
                   ) : (
-                    <span className="text-gray-400">Generated art will appear here</span>
+                    <span className="text-gray-400 font-medium">
+                      Generated art will appear here
+                    </span>
                   )}
                 </div>
+                {generatedImage && (
+                  <Button
+                    onClick={handleDownload}
+                    className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-cyan-400/40 hover:scale-105 transform transition-all duration-300"
+                    style={{
+                      background:
+                        "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)",
+                    }}
+                  >
+                    ⬇️ Download
+                  </Button>
+                )}
               </Card>
             </div>
           </Tabs.Item>
