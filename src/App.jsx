@@ -1,5 +1,7 @@
+// App.jsx
 import { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import {
   Card,
   Tabs,
@@ -19,7 +21,7 @@ export default function App() {
 
   // Handle file upload
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) setUploadedImage(file);
   };
 
@@ -34,9 +36,33 @@ export default function App() {
     return `data:image/png;base64,${base64}`;
   };
 
+  // SweetAlert helpers
+  const showError = (message) => {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: message,
+      confirmButtonColor: "#6366f1",
+    });
+  };
+
+  const showSuccess = (message) => {
+    Swal.fire({
+      icon: "success",
+      title: "Done 🎉",
+      text: message,
+      timer: 1400,
+      showConfirmButton: false,
+    });
+  };
+
   // Generate art from photo
   const handleGeneratePhoto = async () => {
-    if (!uploadedImage) return;
+    if (!uploadedImage) {
+      showError("Please upload an image first!");
+      return;
+    }
+
     setLoading(true);
     setGeneratedImage(null);
 
@@ -55,9 +81,10 @@ export default function App() {
       );
 
       setGeneratedImage(convertToBase64(response.data));
+      showSuccess("Art generated successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to generate art");
+      showError("Failed to generate art. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -65,7 +92,11 @@ export default function App() {
 
   // Generate art from text
   const handleGenerateText = async () => {
-    if (!textPrompt) return;
+    if (!textPrompt.trim()) {
+      showError("Please enter a text prompt!");
+      return;
+    }
+
     setLoading(true);
     setGeneratedImage(null);
 
@@ -80,9 +111,10 @@ export default function App() {
       );
 
       setGeneratedImage(convertToBase64(response.data));
+      showSuccess("Art generated successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to generate art");
+      showError("Failed to generate art. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -97,6 +129,7 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    showSuccess("Downloaded successfully!");
   };
 
   return (
@@ -112,7 +145,10 @@ export default function App() {
                   Upload Photo to Transform
                 </h3>
 
-                <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer">
+                <label
+                  htmlFor="file-upload"
+                  className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer"
+                >
                   {uploadedImage ? (
                     <img
                       src={URL.createObjectURL(uploadedImage)}
@@ -124,8 +160,14 @@ export default function App() {
                       📸 Drag & drop image here or browse
                     </p>
                   )}
-                  <FileInput onChange={handleFileChange} className="hidden" />
                 </label>
+
+                {/* Hidden Flowbite FileInput with matching id */}
+                <FileInput
+                  id="file-upload"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
 
                 <Textarea
                   placeholder="Add an additional prompt..."
@@ -138,13 +180,18 @@ export default function App() {
                 <Button
                   className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-purple-400/40 hover:scale-105 transform transition-all duration-300"
                   style={{
-                    background:
-                      "linear-gradient(to right, #6366f1, #a855f7, #ec4899)",
+                    background: "linear-gradient(to right, #6366f1, #a855f7, #ec4899)",
                   }}
                   onClick={handleGeneratePhoto}
                   disabled={loading}
                 >
-                  {loading ? "Transforming..." : "✨ Transform to Ghibli Art"}
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner size="sm" /> Transforming...
+                    </div>
+                  ) : (
+                    "✨ Transform to Ghibli Art"
+                  )}
                 </Button>
               </Card>
 
@@ -165,13 +212,13 @@ export default function App() {
                     </span>
                   )}
                 </div>
+
                 {generatedImage && (
                   <Button
                     onClick={handleDownload}
                     className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-cyan-400/40 hover:scale-105 transform transition-all duration-300"
                     style={{
-                      background:
-                        "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)",
+                      background: "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)",
                     }}
                   >
                     ⬇️ Download Art
@@ -231,13 +278,18 @@ export default function App() {
                 <Button
                   className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-purple-400/40 hover:scale-105 transform transition-all duration-300"
                   style={{
-                    background:
-                      "linear-gradient(to right, #6366f1, #a855f7, #ec4899)",
+                    background: "linear-gradient(to right, #6366f1, #a855f7, #ec4899)",
                   }}
                   onClick={handleGenerateText}
                   disabled={loading}
                 >
-                  {loading ? "Generating..." : "🎨 Generate Art"}
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner size="sm" /> Generating...
+                    </div>
+                  ) : (
+                    "🎨 Generate Art"
+                  )}
                 </Button>
               </Card>
 
@@ -262,13 +314,13 @@ export default function App() {
                     </span>
                   )}
                 </div>
+
                 {generatedImage && (
                   <Button
                     onClick={handleDownload}
                     className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-cyan-400/40 hover:scale-105 transform transition-all duration-300"
                     style={{
-                      background:
-                        "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)",
+                      background: "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)",
                     }}
                   >
                     ⬇️ Download
