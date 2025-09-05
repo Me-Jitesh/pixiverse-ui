@@ -214,6 +214,7 @@ export default function App() {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
+                    // Validate type
                     if (!file.type.startsWith("image/")) {
                       Swal.fire({
                         icon: "error",
@@ -225,6 +226,20 @@ export default function App() {
                       setUploadedImage(null);
                       return;
                     }
+
+                    // Validate size (10 MB = 10 * 1024 * 1024)
+                    if (file.size > 10 * 1024 * 1024) {
+                      Swal.fire({
+                        icon: "error",
+                        title: "File Too Large",
+                        text: "Image size must be less than 10 MB.",
+                        confirmButtonColor: "#6366f1",
+                      });
+                      e.target.value = ""; // reset input
+                      setUploadedImage(null);
+                      return;
+                    }
+
                     setUploadedImage(file);
                   }
                 }}
