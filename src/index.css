@@ -150,3 +150,31 @@
     animation-delay: 0.8s;
     transform: translateY(20px);
 }
+
+.footer-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: #fff;
+    text-align: center;
+    text-shadow:
+        0 0 5px #ff00ff,
+        0 0 10px #ff00ff,
+        0 0 20px #00eaff;
+    animation: glowPulse 2s infinite alternate;
+}
+
+@keyframes glowPulse {
+    from {
+        text-shadow:
+            0 0 5px #ff00ff,
+            0 0 10px #ff00ff,
+            0 0 20px #00eaff;
+    }
+
+    to {
+        text-shadow:
+            0 0 15px #00eaff,
+            0 0 30px #ff00ff,
+            0 0 50px #ff00ff;
+    }
+}
