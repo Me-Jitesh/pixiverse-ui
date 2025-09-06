@@ -98,16 +98,16 @@ export default function PhotoToArt() {
 
                 <label
                     htmlFor="photo-upload"
-                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer"
+                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer h-56"
                 >
                     {uploadedImage ? (
                         <img
                             src={URL.createObjectURL(uploadedImage)}
                             alt="Uploaded Preview"
-                            className="rounded-xl object-contain max-h-60 w-full shadow-md"
+                            className="rounded-xl object-contain h-full shadow-md"
                         />
                     ) : (
-                        <p className="text-gray-500 font-medium">
+                        <p className="text-gray-500 font-medium text-center">
                             📸 Drag & drop image here or browse
                         </p>
                     )}
@@ -141,14 +141,15 @@ export default function PhotoToArt() {
 
             {/* Output Preview */}
             <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
-                <div className="w-full h-80 flex items-center justify-center">
+
+                <div className="w-full h-56 flex items-center justify-center">
                     {loading ? (
-                        <Spinner size="xl" color="purple" className="w-20 h-20" />
+                        <Spinner size="xl" color="purple" />
                     ) : generatedImagePhoto ? (
                         <img
                             src={generatedImagePhoto}
                             alt="Generated Art"
-                            className="rounded-xl object-cover h-full shadow-md"
+                            className="rounded-xl object-contain h-full shadow-md"
                         />
                     ) : (
                         <span className="text-gray-400 font-medium">
