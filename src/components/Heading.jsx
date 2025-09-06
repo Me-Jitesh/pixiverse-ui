@@ -15,7 +15,7 @@ export default function Heading() {
 
       {/* Subtitle */}
       <p className="mt-4 text-lg md:text-xl text-gray-700 font-medium opacity-0 animate-fade-in">
-        Transform imagination into stunning Ghibli-style art ✨
+        ✨ Transform imagination into stunning Ghibli-style art ✨
       </p>
     </div>
   );

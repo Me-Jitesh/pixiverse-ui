@@ -29,15 +29,15 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-gray-50">
-    {/* Scrollable content */}
-    <main className="flex-grow p-4 w-full max-w-6xl mx-auto overflow-y-auto">
-      <Heading />
-      <Tabs activeTab={activeTab} onSwitch={handleTabSwitch} />
-      {activeTab === "photo" ? <PhotoToArt /> : <TextToArt />}
-    </main>
+      {/* Scrollable content */}
+      <main className="flex-grow p-4 w-full max-w-6xl mx-auto overflow-y-auto">
+        <Heading />
+        <Tabs activeTab={activeTab} onSwitch={handleTabSwitch} />
+        {activeTab === "photo" ? <PhotoToArt /> : <TextToArt />}
+      </main>
 
-    {/* Footer always visible */}
-    <Footer />
-  </div>
+      {/* Footer always visible */}
+      <Footer />
+    </div>
   );
 }
