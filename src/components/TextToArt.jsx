@@ -1,159 +1,147 @@
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Card, Button, Textarea, Select, Spinner } from "flowbite-react";
+import { Button, Textarea, Spinner } from "flowbite-react";
 
-export default function TextToArt() {
-    const [textPrompt, setTextPrompt] = useState("");
-    const [selectedStyle, setSelectedStyle] = useState("cinematic");
-    const [generatedImageText, setGeneratedImageText] = useState(null);
-    const [loading, setLoading] = useState(false);
+const STYLES = [
+  "cinematic","anime","photographic","pixel-art","3d-model","isometric",
+  "origami","neon-punk","low-poly","line-art","fantasy-art","digital-art"
+];
 
-    // Convert arraybuffer to base64
-    const convertToBase64 = (arrayBuffer) => {
-        const base64 = btoa(
-            new Uint8Array(arrayBuffer).reduce(
-                (data, byte) => data + String.fromCharCode(byte),
-                ""
-            )
-        );
-        return `data:image/png;base64,${base64}`;
-    };
+export default function TextToArt({ reduced }) {
+  const [textPrompt, setTextPrompt] = useState("");
+  const [selectedStyle, setSelectedStyle] = useState(STYLES[0]);
+  const [generatedImageText, setGeneratedImageText] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-    // SweetAlert helpers
-    const showError = (msg) =>
-        Swal.fire({ icon: "error", title: "Oops...", text: msg, confirmButtonColor: "#6366f1" });
-    const showSuccess = (msg) =>
-        Swal.fire({ icon: "success", title: "Done", text: msg, timer: 1300, showConfirmButton: false });
+  const convertToBase64 = (arrayBuffer) =>
+    `data:image/png;base64,${btoa(
+      new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
+    )}`;
 
-    // Generate from text
-    const handleGenerateText = async () => {
-        if (!textPrompt.trim()) {
-            showError("Please enter a prompt.");
-            return;
-        }
+  const showError = (msg) =>
+    Swal.fire({ icon: "error", title: "Oops...", text: msg, confirmButtonColor: "#6366f1" });
+  const showSuccess = (msg) =>
+    Swal.fire({ icon: "success", title: "Done", text: msg, timer: 1000, showConfirmButton: false });
 
-        setLoading(true);
-        setGeneratedImageText(null);
+  const handleGenerateText = async () => {
+    if (!textPrompt.trim()) return showError("Enter a prompt.");
+    setLoading(true);
+    setGeneratedImageText(null);
+    setImageLoaded(false);
 
-        try {
-            const response = await axios.post(
-                "https://pixiverse.koyeb.app/api/v1/pixiverse/generate/text",
-                { prompt: textPrompt, style: selectedStyle },
-                { headers: { "Content-Type": "application/json" }, responseType: "arraybuffer" }
-            );
+    try {
+      const response = await axios.post(
+        "https://pixiverse.koyeb.app/api/v1/pixiverse/generate/text",
+        { prompt: textPrompt, style: selectedStyle },
+        { headers: { "Content-Type": "application/json" }, responseType: "arraybuffer" }
+      );
+      setGeneratedImageText(convertToBase64(response.data));
+      showSuccess("Art generated!");
+    } catch {
+      showError("Failed to generate art.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const dataUrl = convertToBase64(response.data);
-            setGeneratedImageText(dataUrl);
-            showSuccess("Art generated!");
-        } catch (err) {
-            console.error(err);
-            showError("Failed to generate art. Try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
+  const handleDownload = (dataUrl) => {
+    if (!dataUrl) return;
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = "ghibli-art.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showSuccess("Downloaded");
+  };
 
-    // Download helper
-    const handleDownload = (dataUrl, filename = "ghibli-art.png") => {
-        if (!dataUrl) return;
-        const link = document.createElement("a");
-        link.href = dataUrl;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showSuccess("Downloaded!");
-    };
-
-    return (
-        <div className="grid md:grid-cols-2 gap-6">
-            {/* Input Card */}
-            <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/90 backdrop-blur-sm">
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Text to Ghibli Art</h3>
-
-                <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer mb-4">
-                    <p className="text-gray-500 font-medium">📝 Generate Ghibli art from your text description</p>
-                </div>
-
-                <Select
-                    className="mb-4 rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                    value={selectedStyle}
-                    onChange={(e) => setSelectedStyle(e.target.value)}
+  return (
+    <div className="flex justify-center items-center w-full py-6 px-3">
+      <div className="flex flex-col items-center gap-4 p-5 rounded-2xl shadow-lg bg-gradient-to-br from-blue-50 via-purple-50 to-gray-50 w-full max-w-4xl">
+        
+        {/* Two-column like PhotoToArt */}
+        <div className="flex flex-col md:flex-row w-full gap-4">
+          
+          {/* Left: style buttons + textarea + button */}
+          <div className="flex-1 flex flex-col gap-3">
+            
+            {/* Style selector */}
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+              {STYLES.map((style) => (
+                <div
+                  key={style}
+                  onClick={() => setSelectedStyle(style)}
+                  className={`px-3 py-1 rounded-xl cursor-pointer transition-all duration-200 ${
+                    selectedStyle === style
+                      ? "bg-purple-400 text-white shadow-md"
+                      : "bg-white text-gray-700 border border-gray-300 hover:bg-purple-100"
+                  } ${reduced ? "text-sm" : "text-base"}`}
                 >
-                    <option>cinematic</option>
-                    <option>anime</option>
-                    <option>photographic</option>
-                    <option>pixel-art</option>
-                    <option>3d-model</option>
-                    <option>isometric</option>
-                    <option>origami</option>
-                    <option>neon-punk</option>
-                    <option>low-poly</option>
-                    <option>line-art</option>
-                    <option>modeling-compound</option>
-                    <option>fantasy-art</option>
-                    <option>enhance</option>
-                    <option>digital-art</option>
-                    <option>tile-texture</option>
-                    <option>comic-book</option>
-                    <option>analog-film</option>
-                </Select>
-
-                <Textarea
-                    placeholder="Your description..."
-                    className="mt-4 p-3 border border-gray-300 rounded-xl shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
-                    rows={3}
-                    value={textPrompt}
-                    onChange={(e) => setTextPrompt(e.target.value)}
-                />
-
-                <Button
-                    className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-purple-400/40 hover:scale-105 transform transition-all duration-300"
-                    style={{ background: "linear-gradient(to right, #6366f1, #a855f7, #ec4899)" }}
-                    onClick={handleGenerateText}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <div className="flex items-center gap-2 justify-center">
-                            <Spinner size="sm" /> Generating...
-                        </div>
-                    ) : (
-                        "🎨 Generate"
-                    )}
-                </Button>
-            </Card>
-
-            {/* Output Preview */}
-            <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
-                <div className="w-full h-80 flex items-center justify-center text-center">
-                    {loading ? (
-                        <Spinner size="xl" color="purple" />
-                    ) : generatedImageText ? (
-                        <img
-                            src={generatedImageText}
-                            alt="Generated Art"
-                            className="rounded-xl object-cover h-full shadow-md"
-                        />
-                    ) : textPrompt ? (
-                        <p className="text-lg text-gray-600 italic">✨ Preview: "{textPrompt}"</p>
-                    ) : (
-                        <span className="text-gray-400 font-medium">
-                            Generated art will appear here
-                        </span>
-                    )}
+                  {style}
                 </div>
+              ))}
+            </div>
 
-                {generatedImageText && (
-                    <Button
-                        onClick={() => handleDownload(generatedImageText)}
-                        className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-cyan-400/40 hover:scale-105 transform transition-all duration-300"
-                        style={{ background: "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)" }}
-                    >
-                        ⬇️ Download Art
-                    </Button>
-                )}
-            </Card>
+            {/* Prompt textarea */}
+            <Textarea
+              placeholder="Your description..."
+              rows={2}
+              value={textPrompt}
+              onChange={(e) => {
+                setTextPrompt(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
+              className={`border border-gray-300 rounded-2xl w-full focus:ring-1 focus:ring-purple-200 resize-none ${
+                reduced ? "p-2 text-sm" : "p-3 text-base"
+              }`}
+            />
+
+            {/* Generate button */}
+            <Button
+              onClick={handleGenerateText}
+              disabled={loading}
+              className={`w-full font-semibold rounded-2xl ${reduced ? "py-1 text-sm" : "py-2 text-base"}`}
+              style={{ background: "linear-gradient(to right,#6366f1,#a855f7,#ec4899)" }}
+            >
+              {loading ? <Spinner size="sm" /> : "🎨 Generate"}
+            </Button>
+          </div>
+
+          {/* Right: generated image preview */}
+          <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white shadow-sm min-h-[180px]">
+            {loading ? (
+              <Spinner size="xl" color="purple" />
+            ) : generatedImageText ? (
+              <img
+                src={generatedImageText}
+                alt="Generated"
+                className={`object-cover w-full h-full rounded-2xl transition-opacity duration-700 ${
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                }`}
+                onLoad={() => setImageLoaded(true)}
+              />
+            ) : (
+              <span className={`text-gray-400 text-center ${reduced ? "text-sm" : "text-base"}`}>
+                Generated art will appear here
+              </span>
+            )}
+          </div>
         </div>
-    );
+
+        {/* Download button */}
+        {generatedImageText && (
+          <Button
+            onClick={() => handleDownload(generatedImageText)}
+            className={`w-full font-semibold rounded-2xl ${reduced ? "py-1 text-sm" : "py-2 text-base"}`}
+            style={{ background: "linear-gradient(to right,#06b6d4,#3b82f6,#6366f1)" }}
+          >
+            ⬇️ Download
+          </Button>
+        )}
+      </div>
+    </div>
+  );
 }
