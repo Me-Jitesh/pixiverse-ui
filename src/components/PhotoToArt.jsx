@@ -82,7 +82,7 @@ export default function PhotoToArt({ reduced }) {
               className="object-contain w-full h-full rounded-2xl shadow-md"
             />
           ) : (
-            <p className={`text-center ${reduced ? "text-sm" : "text-base"} text-gray-500`}>
+            <p className={`text-center ${reduced ? "text-sm" : "text-base"} text-gray-300`}>
               📸 Drag & drop or browse
             </p>
           )}
@@ -96,7 +96,7 @@ export default function PhotoToArt({ reduced }) {
           ) : generatedImagePhoto ? (
             <img src={generatedImagePhoto} alt="Generated" className="object-contain w-full h-full rounded-2xl" />
           ) : (
-            <span className={`text-gray-400 ${reduced ? "text-sm" : "text-base"} text-center`}>
+            <span className={`text-gray-300 ${reduced ? "text-sm" : "text-base"} text-center`}>
               Generated art will appear here
             </span>
           )}

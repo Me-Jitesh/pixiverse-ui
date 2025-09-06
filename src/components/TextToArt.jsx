@@ -58,11 +58,11 @@ export default function TextToArt({ reduced }) {
   };
 
   return (
-    <div className="flex justify-center items-center w-full py-6 px-3">
-      <div className="flex flex-col items-center gap-4 p-5 rounded-2xl shadow-lg bg-white/20 backdrop-blur-md w-full max-w-4xl">
+    <div className="flex justify-center items-center w-full py-2 px-3">
+      <div className="flex flex-col items-center gap-4 p-2 rounded-2xl shadow-lg bg-white/20 backdrop-blur-md w-full max-w-4xl">
         
         {/* Two-column layout */}
-        <div className="flex flex-col md:flex-row w-full gap-4">
+        <div className="flex flex-col md:flex-row w-full gap-3">
           
           {/* Left: styles + textarea + button */}
           <div className="flex-1 flex flex-col gap-3">
@@ -74,7 +74,7 @@ export default function TextToArt({ reduced }) {
                   className={`px-3 py-1 rounded-xl cursor-pointer transition-all duration-200 ${
                     selectedStyle === style
                       ? "bg-purple-400 text-white shadow-md"
-                      : "bg-white/60 text-gray-700 border border-gray-300 hover:bg-purple-100/70"
+                      : "bg-white/60 text-gray-300 border border-gray-300 hover:bg-purple-100/70"
                   } ${reduced ? "text-sm" : "text-base"}`}
                 >
                   {style}
