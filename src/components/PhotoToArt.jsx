@@ -143,7 +143,7 @@ export default function PhotoToArt() {
             <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
                 <div className="w-full h-80 flex items-center justify-center">
                     {loading ? (
-                        <Spinner size="xxl" color="purple" />
+                        <Spinner size="xl" color="purple" className="w-20 h-20" />
                     ) : generatedImagePhoto ? (
                         <img
                             src={generatedImagePhoto}
