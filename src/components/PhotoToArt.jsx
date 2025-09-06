@@ -1,173 +1,143 @@
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Card, Button, Textarea, FileInput, Spinner } from "flowbite-react";
+import { Button, Textarea, FileInput, Spinner } from "flowbite-react";
 
-export default function PhotoToArt() {
-    const [uploadedImage, setUploadedImage] = useState(null);
-    const [photoPrompt, setPhotoPrompt] = useState("");
-    const [generatedImagePhoto, setGeneratedImagePhoto] = useState(null);
-    const [loading, setLoading] = useState(false);
+export default function PhotoToArt({ reduced }) {
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [photoPrompt, setPhotoPrompt] = useState("");
+  const [generatedImagePhoto, setGeneratedImagePhoto] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    // Convert arraybuffer to base64
-    const convertToBase64 = (arrayBuffer) => {
-        const base64 = btoa(
-            new Uint8Array(arrayBuffer).reduce(
-                (data, byte) => data + String.fromCharCode(byte),
-                ""
-            )
-        );
-        return `data:image/png;base64,${base64}`;
-    };
+  const convertToBase64 = (arrayBuffer) =>
+    `data:image/png;base64,${btoa(
+      new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
+    )}`;
 
-    // SweetAlert helpers
-    const showError = (msg) =>
-        Swal.fire({ icon: "error", title: "Oops...", text: msg, confirmButtonColor: "#6366f1" });
-    const showSuccess = (msg) =>
-        Swal.fire({ icon: "success", title: "Done", text: msg, timer: 1300, showConfirmButton: false });
+  const showError = (msg) =>
+    Swal.fire({ icon: "error", title: "Oops...", text: msg, confirmButtonColor: "#6366f1" });
+  const showSuccess = (msg) =>
+    Swal.fire({ icon: "success", title: "Done", text: msg, timer: 1000, showConfirmButton: false });
 
-    // File validation
-    const handleFileChange = (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return showError("Only images allowed!");
+    if (file.size > 10 * 1024 * 1024) return showError("Max 10MB!");
+    setUploadedImage(file);
+  };
 
-        if (!file.type.startsWith("image/")) {
-            showError("Only image files are allowed!");
-            return;
-        }
+  const handleGeneratePhoto = async () => {
+    if (!uploadedImage) return showError("Upload image first.");
+    setLoading(true);
+    setGeneratedImagePhoto(null);
 
-        if (file.size > 10 * 1024 * 1024) {
-            showError("File size must be under 10MB!");
-            return;
-        }
+    try {
+      const formData = new FormData();
+      formData.append("image", uploadedImage);
+      formData.append("prompt", photoPrompt);
 
-        setUploadedImage(file);
-    };
+      const response = await axios.post(
+        "https://pixiverse.koyeb.app/api/v1/pixiverse/generate",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" }, responseType: "arraybuffer" }
+      );
 
-    // Generate from photo
-    const handleGeneratePhoto = async () => {
-        if (!uploadedImage) {
-            showError("Please upload an image first.");
-            return;
-        }
+      setGeneratedImagePhoto(convertToBase64(response.data));
+      showSuccess("Art generated!");
+    } catch {
+      showError("Failed to generate art.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setLoading(true);
-        setGeneratedImagePhoto(null);
+  const handleDownload = (dataUrl) => {
+    if (!dataUrl) return;
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = "ghibli-art.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showSuccess("Downloaded!");
+  };
 
-        try {
-            const formData = new FormData();
-            formData.append("image", uploadedImage);
-            formData.append("prompt", photoPrompt);
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 p-4 bg-gradient-to-br from-blue-50 via-purple-50 to-gray-50 rounded-2xl shadow-lg">
+      
+      {/* Side by Side: Upload & Preview */}
+      <div className={`flex gap-4 w-full max-w-4xl ${reduced ? "h-36" : "h-56"}`}>
 
-            const response = await axios.post(
-                "https://pixiverse.koyeb.app/api/v1/pixiverse/generate",
-                formData,
-                { headers: { "Content-Type": "multipart/form-data" }, responseType: "arraybuffer" }
-            );
+        {/* Left: Upload */}
+        <label
+          htmlFor="photo-upload"
+          className={`flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-2xl bg-white hover:bg-purple-50 transition cursor-pointer ${
+            reduced ? "p-2" : "p-4"
+          }`}
+        >
+          {uploadedImage ? (
+            <img
+              src={URL.createObjectURL(uploadedImage)}
+              alt="Uploaded"
+              className="object-contain w-full h-full rounded-2xl shadow-md"
+            />
+          ) : (
+            <p className={`text-center ${reduced ? "text-sm" : "text-base"} text-gray-500`}>
+              📸 Drag & drop or browse
+            </p>
+          )}
+          <FileInput id="photo-upload" onChange={handleFileChange} className="hidden" />
+        </label>
 
-            const dataUrl = convertToBase64(response.data);
-            setGeneratedImagePhoto(dataUrl);
-            showSuccess("Art generated!");
-        } catch (err) {
-            console.error(err);
-            showError("Failed to generate art. Try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Download helper
-    const handleDownload = (dataUrl, filename = "ghibli-art.png") => {
-        if (!dataUrl) return;
-        const link = document.createElement("a");
-        link.href = dataUrl;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showSuccess("Downloaded!");
-    };
-
-    return (
-        <div className="grid md:grid-cols-2 gap-6">
-            {/* Input Card */}
-            <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/90 backdrop-blur-sm">
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-                    Upload Photo to Transform
-                </h3>
-
-                <label
-                    htmlFor="photo-upload"
-                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-purple-50 transition cursor-pointer h-56"
-                >
-                    {uploadedImage ? (
-                        <img
-                            src={URL.createObjectURL(uploadedImage)}
-                            alt="Uploaded Preview"
-                            className="rounded-xl object-contain h-full shadow-md"
-                        />
-                    ) : (
-                        <p className="text-gray-500 font-medium text-center">
-                            📸 Drag & drop image here or browse
-                        </p>
-                    )}
-                </label>
-
-                <FileInput id="photo-upload" onChange={handleFileChange} className="hidden" />
-
-                <Textarea
-                    placeholder="Add an additional prompt..."
-                    className="mt-4 p-3 border border-gray-300 rounded-xl shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
-                    rows={3}
-                    value={photoPrompt}
-                    onChange={(e) => setPhotoPrompt(e.target.value)}
-                />
-
-                <Button
-                    className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-purple-400/40 hover:scale-105 transform transition-all duration-300"
-                    style={{ background: "linear-gradient(to right, #6366f1, #a855f7, #ec4899)" }}
-                    onClick={handleGeneratePhoto}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <div className="flex items-center gap-2 justify-center">
-                            <Spinner size="sm" /> Transforming...
-                        </div>
-                    ) : (
-                        "✨ Transform to Ghibli Art"
-                    )}
-                </Button>
-            </Card>
-
-            {/* Output Preview */}
-            <Card className="rounded-2xl shadow-xl border border-gray-200 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
-
-                <div className="w-full h-56 flex items-center justify-center">
-                    {loading ? (
-                        <Spinner size="xl" color="purple" />
-                    ) : generatedImagePhoto ? (
-                        <img
-                            src={generatedImagePhoto}
-                            alt="Generated Art"
-                            className="rounded-xl object-contain h-full shadow-md"
-                        />
-                    ) : (
-                        <span className="text-gray-400 font-medium">
-                            Generated art will appear here
-                        </span>
-                    )}
-                </div>
-
-                {generatedImagePhoto && (
-                    <Button
-                        onClick={() => handleDownload(generatedImagePhoto)}
-                        className="mt-4 w-full text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-cyan-400/40 hover:scale-105 transform transition-all duration-300"
-                        style={{ background: "linear-gradient(to right, #06b6d4, #3b82f6, #6366f1)" }}
-                    >
-                        ⬇️ Download Art
-                    </Button>
-                )}
-            </Card>
+        {/* Right: Generated Art Preview */}
+        <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white shadow-sm">
+          {loading ? (
+            <Spinner size="xl" color="purple" />
+          ) : generatedImagePhoto ? (
+            <img src={generatedImagePhoto} alt="Generated" className="object-contain w-full h-full rounded-2xl" />
+          ) : (
+            <span className={`text-gray-400 ${reduced ? "text-sm" : "text-base"} text-center`}>
+              Generated art will appear here
+            </span>
+          )}
         </div>
-    );
+
+      </div>
+
+      {/* Prompt */}
+      <Textarea
+        placeholder="Add prompt..."
+        rows={reduced ? 2 : 3}
+        className={`border border-gray-300 rounded-2xl focus:ring-1 focus:ring-purple-200 ${
+          reduced ? "p-2 text-sm" : "p-3 text-base"
+        } w-full max-w-4xl`}
+        value={photoPrompt}
+        onChange={(e) => setPhotoPrompt(e.target.value)}
+      />
+
+      {/* Buttons */}
+      <div className="flex gap-4 w-full max-w-4xl">
+        <Button
+          onClick={handleGeneratePhoto}
+          disabled={loading}
+          className={`flex-1 font-semibold rounded-2xl ${reduced ? "py-1 text-sm" : "py-2 text-base"}`}
+          style={{ background: "linear-gradient(to right,#6366f1,#a855f7,#ec4899)" }}
+        >
+          {loading ? <Spinner size="sm" /> : "✨ Transform"}
+        </Button>
+
+        {generatedImagePhoto && (
+          <Button
+            onClick={() => handleDownload(generatedImagePhoto)}
+            className={`flex-1 font-semibold rounded-2xl ${reduced ? "py-1 text-sm" : "py-2 text-base"}`}
+            style={{ background: "linear-gradient(to right,#06b6d4,#3b82f6,#6366f1)" }}
+          >
+            ⬇️ Download
+          </Button>
+        )}
+      </div>
+
+    </div>
+  );
 }
