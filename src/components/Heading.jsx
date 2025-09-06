@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Heading() {
   return (
-    <div className="text-center mb-10 relative overflow-hidden">
+    <div className="text-center mb-2 relative overflow-hidden">
       {/* Main Gradient Heading */}
       <h1
         className="pixiverse-heading pixi-animate relative z-10"
