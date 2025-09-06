@@ -22,7 +22,21 @@ export default function App() {
       cancelButtonText: "Cancel",
       confirmButtonColor: "#ef4444",
       cancelButtonColor: "#6366f1",
+      background: "rgba(255, 255, 255, 0.40)",
+      color: "#ffff22",
+      backdrop: `
+        rgba(0,0,0,0.5)
+        blur(6px)
+      `,
+      customClass: {
+        popup: "rounded-2xl shadow-lg",
+        title: "text-lg font-semibold text-gray-200",
+        htmlContainer: "text-gray-200",
+        confirmButton: "px-4 py-2 rounded-lg font-semibold",
+        cancelButton: "px-4 py-2 rounded-lg font-semibold",
+      },
     });
+
 
     if (!result.isConfirmed) return;
     setActiveTab(targetTab);
