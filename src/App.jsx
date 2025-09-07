@@ -6,6 +6,7 @@ import TextToArt from "./components/TextToArt";
 import Heading from "./components/Heading";
 import Footer from "./components/Footer";
 import bg from "./assets/bg.png";
+import bgm from "./assets/bgm.png";
 import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
@@ -47,13 +48,20 @@ export default function App() {
     <>
       <Analytics />
       <div className="relative min-h-screen w-full flex flex-col">
-        {/* Background image */}
+
+
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-no-repeat"
           style={{ backgroundImage: `url(${bg})` }}
         ></div>
 
-        {/* Darker gradient overlay */}
+        <div
+          className="absolute inset-0 bg-center bg-repeat sm:hidden"
+          style={{
+            backgroundImage: `url(${bgm})`,
+          }}
+        ></div>
+
         <div
           style={{
             background:
