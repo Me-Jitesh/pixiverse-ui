@@ -1,10 +1,7 @@
 # :: 🌌 PixiVerse ::
 
-> An AI-powered art generator that transforms your **photos** or **text descriptions** into stunning **Ghibli-style**
-> artworks.  
-> Built with **React + Vite + Flowbite**, powered by a **Spring Boot backend**, and designed with a
-> smooth,
-> modern UI.
+#### An AI-powered art generator that transforms your **photos** or **text descriptions** into stunning **Ghibli-Style** artworks.  
+#### Built with **React + Vite + Flowbite**, powered by a **Spring Boot backend**, and designed with a smooth, modern UI.
 
 🔗 **Frontend :** [https://pix-generator-ai.vercel.app/](https://pix-generator-ai.vercel.app/)  
 🔗 **Backend  :** [https://pixiverse.koyeb.app](https://pixiverse.koyeb.app)

@@ -2,10 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* PixiVerse heading — guaranteed gradient + WebKit fallback */
 .pixiverse-heading {
     font-size: 3rem;
-    /* tweak: matches Tailwind 5xl/6xl roughly */
     line-height: 1;
     font-weight: 800;
     display: inline-block;
@@ -13,20 +11,14 @@
             #4f46e5 0%,
             #8b5cf6 35%,
             #ec4899 100%);
-    /* make the gradient fill the text */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    /* Safari/Chrome */
     background-clip: text;
     color: transparent;
-    /* fallback */
-    /* soft glow */
     text-shadow: 0 8px 30px rgba(99, 102, 241, 0.08);
-    /* ensure big screens look good */
     padding: 0 4px;
 }
 
-/* Optional animated shimmer — apply class "pixi-animate" to enable */
 .pixi-animate {
     background-size: 200% 200%;
     animation: pixiGradient 6s ease infinite;
@@ -46,13 +38,12 @@
     }
 }
 
-/* Small responsive tweaks */
+/*  responsive tweaks */
 @media (min-width: 768px) {
     .pixiverse-heading {
         font-size: 4rem;
     }
 
-    /* md+ */
 }
 
 /* Main Gradient Heading */

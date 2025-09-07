@@ -16,16 +16,15 @@ export default function App() {
     if (targetTab === activeTab) return;
 
     const result = await Swal.fire({
-      title: "Switch feature?",
-      text: "Your current progress will be lost if you switch. Continue?",
+      text: "Discard Image ?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, switch",
+      confirmButtonText: "Yes, Switch",
       cancelButtonText: "Cancel",
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6366f1",
+      confirmButtonColor: "#ff00ff",
+      cancelButtonColor: "#8b5cf6",
       background: "rgba(255, 255, 255, 0.40)",
-      color: "#ffff22",
+      color: "#ffffff",
       backdrop: `
         rgba(0,0,0,0.5)
         blur(6px)
@@ -70,7 +69,6 @@ export default function App() {
           className="absolute inset-0 z-10"
         ></div>
 
-        {/* Main content */}
         <div className="relative z-20 flex flex-col min-h-screen w-full">
           <main className="flex-grow p-4 md:p-6 w-full max-w-6xl mx-auto">
             <Heading />

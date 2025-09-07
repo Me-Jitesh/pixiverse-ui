@@ -26,7 +26,7 @@ export default function TextToArt({ reduced }) {
     Swal.fire({ icon: "success", title: "Done", text: msg, timer: 1000, showConfirmButton: false });
 
   const handleGenerateText = async () => {
-    if (!textPrompt.trim()) return showError("Enter a prompt.");
+    if (!textPrompt.trim()) return showError("Enter a Prompt...");
     setLoading(true);
     setGeneratedImageText(null);
     setImageLoaded(false);
@@ -61,10 +61,8 @@ export default function TextToArt({ reduced }) {
     <div className="flex justify-center items-center w-full py-2 px-3">
       <div className="flex flex-col items-center gap-4 p-2 rounded-2xl shadow-lg bg-white/20 backdrop-blur-md w-full max-w-4xl">
 
-        {/* Two-column layout */}
         <div className="flex flex-col md:flex-row w-full gap-3">
 
-          {/* Left: styles + textarea + button */}
           <div className="flex-1 flex flex-col gap-3">
             <div className="flex flex-wrap gap-2 justify-center md:justify-start">
               {STYLES.map((style) => (
@@ -82,7 +80,7 @@ export default function TextToArt({ reduced }) {
             </div>
 
             <Textarea
-              placeholder="Your description..."
+              placeholder="Enter description..."
               rows={2}
               value={textPrompt}
               onChange={(e) => {
@@ -105,7 +103,6 @@ export default function TextToArt({ reduced }) {
             </Button>
           </div>
 
-          {/* Right: generated image preview */}
           <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white/40 backdrop-blur-sm shadow-inner min-h-[180px]">
             {loading ? (
               <Spinner size="xl" color="purple" />
@@ -119,7 +116,7 @@ export default function TextToArt({ reduced }) {
               />
             ) : (
               <span className={`text-gray-200 text-center ${reduced ? "text-sm" : "text-base"}`}>
-                Generated art will appear here
+                Generated Art Preview
               </span>
             )}
           </div>

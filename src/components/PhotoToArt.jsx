@@ -22,7 +22,7 @@ export default function PhotoToArt({ reduced }) {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) return showError("Only images allowed!");
+    if (!file.type.startsWith("image/")) return showError("Only images allowed !");
     if (file.size > 10 * 1024 * 1024) return showError("Max 10MB!");
     setUploadedImage(file);
   };
@@ -44,9 +44,9 @@ export default function PhotoToArt({ reduced }) {
       );
 
       setGeneratedImagePhoto(convertToBase64(response.data));
-      showSuccess("Art generated!");
+      showSuccess("Art generated !");
     } catch {
-      showError("Failed to generate art.");
+      showError("Failed to generate art");
     } finally {
       setLoading(false);
     }
@@ -66,10 +66,8 @@ export default function PhotoToArt({ reduced }) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 p-4 rounded-2xl shadow-lg bg-white/10 backdrop-blur-sm">
 
-      {/* Side by Side: Upload & Preview */}
       <div className={`flex gap-4 w-full max-w-4xl ${reduced ? "h-36" : "h-56"}`}>
 
-        {/* Left: Upload */}
         <label
           htmlFor="photo-upload"
           className={`flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-2xl bg-white/20 hover:bg-purple-50/20 transition cursor-pointer ${reduced ? "p-2" : "p-4"
@@ -83,13 +81,12 @@ export default function PhotoToArt({ reduced }) {
             />
           ) : (
             <p className={`text-center ${reduced ? "text-sm" : "text-base"} text-gray-300`}>
-              📸 Drag & drop or browse
+              📸 Drag & Drop or Browse
             </p>
           )}
           <FileInput id="photo-upload" onChange={handleFileChange} className="hidden" />
         </label>
 
-        {/* Right: Generated Art Preview */}
         <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white/20 shadow-sm">
           {loading ? (
             <Spinner size="xl" color="purple" />
@@ -97,14 +94,13 @@ export default function PhotoToArt({ reduced }) {
             <img src={generatedImagePhoto} alt="Generated" className="object-contain w-full h-full rounded-2xl" />
           ) : (
             <span className={`text-gray-300 ${reduced ? "text-sm" : "text-base"} text-center`}>
-              Generated art will appear here
+              Preview
             </span>
           )}
         </div>
 
       </div>
 
-      {/* Prompt */}
       <Textarea
         placeholder="Add prompt..."
         rows={reduced ? 2 : 3}
@@ -115,7 +111,6 @@ export default function PhotoToArt({ reduced }) {
       />
 
 
-      {/* Buttons */}
       <div className="flex gap-4 w-full max-w-4xl">
         <Button
           onClick={handleGeneratePhoto}
