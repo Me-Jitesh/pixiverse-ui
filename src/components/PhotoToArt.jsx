@@ -108,11 +108,12 @@ export default function PhotoToArt({ reduced }) {
       <Textarea
         placeholder="Add prompt..."
         rows={reduced ? 2 : 3}
-        className={`border border-gray-300 rounded-2xl focus:ring-1 focus:ring-purple-200 ${reduced ? "p-2 text-sm" : "p-3 text-base"
-          } w-full max-w-4xl bg-white/10 backdrop-blur-sm`}
+        className={`border border-gray-300 rounded-2xl focus:ring-1 focus:ring-purple-500 ${reduced ? "p-2 text-sm" : "p-3 text-base"
+          } w-full max-w-4xl bg-transparent backdrop-blur-sm text-white placeholder-gray-300`}
         value={photoPrompt}
         onChange={(e) => setPhotoPrompt(e.target.value)}
       />
+
 
       {/* Buttons */}
       <div className="flex gap-4 w-full max-w-4xl">

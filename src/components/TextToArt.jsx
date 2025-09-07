@@ -4,8 +4,8 @@ import Swal from "sweetalert2";
 import { Button, Textarea, Spinner } from "flowbite-react";
 
 const STYLES = [
-  "cinematic","anime","photographic","pixel-art","3d-model","isometric",
-  "origami","neon-punk","low-poly","line-art","fantasy-art","digital-art"
+  "cinematic", "anime", "photographic", "pixel-art", "3d-model", "isometric",
+  "origami", "neon-punk", "low-poly", "line-art", "fantasy-art", "digital-art"
 ];
 
 export default function TextToArt({ reduced }) {
@@ -60,10 +60,10 @@ export default function TextToArt({ reduced }) {
   return (
     <div className="flex justify-center items-center w-full py-2 px-3">
       <div className="flex flex-col items-center gap-4 p-2 rounded-2xl shadow-lg bg-white/20 backdrop-blur-md w-full max-w-4xl">
-        
+
         {/* Two-column layout */}
         <div className="flex flex-col md:flex-row w-full gap-3">
-          
+
           {/* Left: styles + textarea + button */}
           <div className="flex-1 flex flex-col gap-3">
             <div className="flex flex-wrap gap-2 justify-center md:justify-start">
@@ -71,11 +71,10 @@ export default function TextToArt({ reduced }) {
                 <div
                   key={style}
                   onClick={() => setSelectedStyle(style)}
-                  className={`px-3 py-1 rounded-xl cursor-pointer transition-all duration-200 ${
-                    selectedStyle === style
-                      ? "bg-purple-400 text-white shadow-md"
-                      : "bg-white/60 text-gray-300 border border-gray-300 hover:bg-purple-100/70"
-                  } ${reduced ? "text-sm" : "text-base"}`}
+                  className={`px-3 py-1 rounded-xl cursor-pointer transition-all duration-200 ${selectedStyle === style
+                    ? "bg-purple-400 text-white shadow-md"
+                    : "bg-white/60 text-gray-300 border border-gray-300 hover:bg-purple-100/70"
+                    } ${reduced ? "text-sm" : "text-base"}`}
                 >
                   {style}
                 </div>
@@ -91,9 +90,9 @@ export default function TextToArt({ reduced }) {
                 e.target.style.height = "auto";
                 e.target.style.height = e.target.scrollHeight + "px";
               }}
-              className={`border border-gray-300 rounded-2xl w-full focus:ring-1 focus:ring-purple-200 resize-none bg-white/60 backdrop-blur-sm ${
-                reduced ? "p-2 text-sm" : "p-3 text-base"
-              }`}
+              className={`border border-gray-300 rounded-2xl w-full focus:ring-1 focus:ring-purple-500 resize-none 
+                bg-transparent backdrop-blur-sm text-white placeholder-gray-200 ${reduced ? "p-2 text-sm" : "p-3 text-base"
+                }`}
             />
 
             <Button
@@ -114,9 +113,8 @@ export default function TextToArt({ reduced }) {
               <img
                 src={generatedImageText}
                 alt="Generated"
-                className={`object-contain w-full h-full rounded-2xl transition-opacity duration-700 ${
-                  imageLoaded ? "opacity-100" : "opacity-0"
-                }`}
+                className={`object-contain w-full h-full rounded-2xl transition-opacity duration-700 ${imageLoaded ? "opacity-100" : "opacity-0"
+                  }`}
                 onLoad={() => setImageLoaded(true)}
               />
             ) : (
