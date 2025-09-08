@@ -88,7 +88,7 @@ export default function TextToArt({ reduced }) {
                 e.target.style.height = "auto";
                 e.target.style.height = e.target.scrollHeight + "px";
               }}
-              className={`border border-gray-300 rounded-2xl w-full focus:ring-1 focus:ring-purple-500 resize-none 
+              className={`border border-gray-00 rounded-2xl w-full focus:ring-1 focus:ring-purple-500 resize-none 
                 bg-transparent backdrop-blur-sm text-white placeholder-gray-200 ${reduced ? "p-2 text-sm" : "p-3 text-base"
                 }`}
             />
@@ -103,20 +103,20 @@ export default function TextToArt({ reduced }) {
             </Button>
           </div>
 
-          <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white/40 backdrop-blur-sm shadow-inner min-h-[180px]">
+          <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white shadow-sm min-h-[180px] max-h-[400px] bg-transparent">
             {loading ? (
               <Spinner size="xl" color="purple" />
             ) : generatedImageText ? (
               <img
                 src={generatedImageText}
                 alt="Generated"
-                className={`object-contain w-full h-full rounded-2xl transition-opacity duration-700 ${imageLoaded ? "opacity-100" : "opacity-0"
+                className={`max-h-[400px] w-auto h-auto rounded-2xl transition-opacity duration-700 ${imageLoaded ? "opacity-100" : "opacity-0"
                   }`}
                 onLoad={() => setImageLoaded(true)}
               />
             ) : (
-              <span className={`text-gray-200 text-center ${reduced ? "text-sm" : "text-base"}`}>
-                Generated Art Preview
+              <span className={`text-gray-400 text-center ${reduced ? "text-sm" : "text-base"}`}>
+                Generated art will appear here
               </span>
             )}
           </div>
