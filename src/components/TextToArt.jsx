@@ -103,7 +103,7 @@ export default function TextToArt({ reduced }) {
             </Button>
           </div>
 
-          <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white shadow-sm min-h-[180px] max-h-[400px] bg-transparent">
+          <div className="flex  flex-col border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center shadow-sm min-h-[180px] max-h-[400px] bg-transparent">
             {loading ? (
               <Spinner size="xl" color="purple" />
             ) : generatedImageText ? (
@@ -116,7 +116,7 @@ export default function TextToArt({ reduced }) {
               />
             ) : (
               <span className={`text-gray-400 text-center ${reduced ? "text-sm" : "text-base"}`}>
-                Generated art will appear here
+                Generated Preview
               </span>
             )}
           </div>

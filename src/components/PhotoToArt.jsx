@@ -70,8 +70,7 @@ export default function PhotoToArt({ reduced }) {
 
         <label
           htmlFor="photo-upload"
-          className={`flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-2xl bg-white/20 hover:bg-purple-50/20 transition cursor-pointer ${reduced ? "p-2" : "p-4"
-            }`}
+          className={`flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-2xl bg-white/20 hover:bg-purple-50/20 transition cursor-pointer ${reduced ? "p-2" : "p-4"}`}
         >
           {uploadedImage ? (
             <img
@@ -86,30 +85,15 @@ export default function PhotoToArt({ reduced }) {
           )}
           <FileInput id="photo-upload" onChange={handleFileChange} className="hidden" />
         </label>
-
-        <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center bg-white/20 shadow-sm">
-          {loading ? (
-            <Spinner size="xl" color="purple" />
-          ) : generatedImagePhoto ? (
-            <img src={generatedImagePhoto} alt="Generated" className="object-contain w-full h-full rounded-2xl" />
-          ) : (
-            <span className={`text-gray-300 ${reduced ? "text-sm" : "text-base"} text-center`}>
-              Preview
-            </span>
-          )}
-        </div>
-
       </div>
 
       <Textarea
         placeholder="Add prompt..."
         rows={reduced ? 2 : 3}
-        className={`border border-gray-300 rounded-2xl focus:ring-1 focus:ring-purple-500 ${reduced ? "p-2 text-sm" : "p-3 text-base"
-          } w-full max-w-4xl bg-transparent backdrop-blur-sm text-white placeholder-gray-300`}
+        className={`border border-gray-300 rounded-2xl focus:ring-1 focus:ring-purple-500 ${reduced ? "p-2 text-sm" : "p-3 text-base"} w-full max-w-4xl bg-transparent backdrop-blur-sm text-white placeholder-gray-300`}
         value={photoPrompt}
         onChange={(e) => setPhotoPrompt(e.target.value)}
       />
-
 
       <div className="flex gap-4 w-full max-w-4xl">
         <Button
@@ -120,7 +104,27 @@ export default function PhotoToArt({ reduced }) {
         >
           {loading ? <Spinner size="sm" /> : "✨ Transform"}
         </Button>
+      </div>
 
+      <div className={`flex gap-4 w-full max-w-4xl ${reduced ? "h-36" : "h-56"}`}>
+        <div className="flex-1 border border-gray-200 rounded-2xl overflow-hidden flex items-center justify-center shadow-sm min-h-[180px] max-h-[400px] bg-transparent  flex-row-revers">
+          {loading ? (
+            <Spinner size="xl" color="purple" />
+          ) : generatedImagePhoto ? (
+            <img
+              src={generatedImagePhoto}
+              alt="Generated"
+              className="object-contain w-full h-full rounded-2xl transition-opacity duration-700"
+            />
+          ) : (
+            <span className={`text-gray-300 ${reduced ? "text-sm" : "text-base"} text-center`}>
+              Generated Preview
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex gap-4 w-full max-w-4xl">
         {generatedImagePhoto && (
           <Button
             onClick={() => handleDownload(generatedImagePhoto)}
@@ -131,7 +135,8 @@ export default function PhotoToArt({ reduced }) {
           </Button>
         )}
       </div>
-
     </div>
+
+
   );
 }
