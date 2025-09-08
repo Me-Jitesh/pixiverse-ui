@@ -64,7 +64,7 @@ export default function App() {
         <div
           style={{
             background:
-              "linear-gradient(to bottom right, rgba(17,24,39,0.8), rgba(88,28,135,0.75), rgba(30,41,59,0.85))"
+              "linear-gradient(to top right, rgba(17,24,39,0.80), rgba(88,28,135,0.80), rgba(30,41,59,0.20))"
           }}
           className="absolute inset-0 z-10"
         ></div>
